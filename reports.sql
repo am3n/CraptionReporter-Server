@@ -1,8 +1,9 @@
-CREATE TABLE IF NOT EXISTS `crash_reports` (
+CREATE TABLE IF NOT EXISTS `reports` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `timestamp` varchar(20) DEFAULT NULL,
   `solved` tinyint(1) NOT NULL DEFAULT '0',
   `stack_trace` text,
+  `fatal` tinyint(1) NOT NULL DEFAULT '0',
   `occur_date` varchar(20) DEFAULT NULL,
   `user_identification` varchar(50) DEFAULT NULL,
   `app_version_code` int(11) DEFAULT NULL,

@@ -29,6 +29,7 @@ if ($json_data===null && json_last_error()!==JSON_ERROR_NONE)
 
 
 $crashes = $json_data["crashes"];
+$exceptions = $json_data["exceptions"];
 $user_identification = $json_data["user_identification"];
 $app_version_code = $json_data["app_version_code"];
 $os_version = $json_data["os_version"];
@@ -48,12 +49,48 @@ $conn = DBHandler::getInstance(DB_HOST, DB_NAME, DB_USER, DB_PASSWORD)->connect(
 $stmt = null;
 $result = array();
 
+
 foreach ($crashes as $crash) {
 
     $file_name = $crash["file_name"];
     $occur_date = substr($file_name, 0, 19);
+    $stack_trace = getStackTrace($crash["stack_trace"]);
+    if (insert($conn, $ir_time, $stack_trace, true, $occur_date, $user_identification, 
+               $app_version_code, $os_version, $cpu, $device_imei, $device_model, $device_screenclass, 
+               $device_dpiclass, $device_screensize, $device_screen_dimensions_dpis, 
+               $device_screen_dimensions_pixels)) {
+        array_push($result, $file_name);
+    }
 
-    $stack_trace = $crash["stack_trace"];
+}
+
+foreach ($exceptions as $exception) {
+    
+    $file_name = $exception["file_name"];
+    $occur_date = substr($file_name, 0, 19);
+    $stack_trace = stackTrace($exception["stack_trace"]);
+    if (insert($conn, $ir_time, $stack_trace, false, $occur_date, $user_identification, 
+               $app_version_code, $os_version, $cpu, $device_imei, $device_model, $device_screenclass, 
+               $device_dpiclass, $device_screensize, $device_screen_dimensions_dpis, 
+               $device_screen_dimensions_pixels)) {
+        array_push($result, $file_name);
+    }
+
+}
+
+
+echo json_encode($result);
+if ($stmt!=null)
+    $stmt->closeCursor();
+$stmt = null;
+$conn = null;
+exit();
+
+
+
+//*******************************************************************************
+
+function getStackTrace($stack_trace) {
 
     try {
         if (strpos($stack_trace, 'retrace:')===0) {
@@ -82,11 +119,25 @@ foreach ($crashes as $crash) {
         unlink($stackFileName);
     }
 
+    return $stack_trace;
+
+}
+
+
+
+function insert(
+    $conn, $ir_time, $stack_trace, $fatal, $occur_date, $user_identification, 
+    $app_version_code, $os_version, $cpu, $device_imei, $device_model, $device_screenclass, 
+    $device_dpiclass, $device_screensize, $device_screen_dimensions_dpis, 
+    $device_screen_dimensions_pixels
+) {
+
     try {
 
-        $query = "INSERT INTO crash_reports (
+        $query = "INSERT INTO reports (
             timestamp,
             stack_trace,
+            fatal,
             occur_date,
             user_identification,
             app_version_code,
@@ -102,6 +153,7 @@ foreach ($crashes as $crash) {
         ) VALUES (
             :timestamp,
             :stack_trace,
+            :fatal,
             :occur_date,
             :user_identification,
             :app_version_code,
@@ -120,6 +172,7 @@ foreach ($crashes as $crash) {
         $flag = $stmt->execute(array(
             ':timestamp' => $ir_time,
             ':stack_trace' => $stack_trace,
+            ':fatal' => $fatal ? 1 : 0,
             ':occur_date' => $occur_date,
             ':user_identification' => $user_identification,
             ':app_version_code' => $app_version_code,
@@ -134,19 +187,12 @@ foreach ($crashes as $crash) {
             ':device_screen_dimensions_pixels' => $device_screen_dimensions_pixels
         ));
 
-        if ($flag)
-            array_push($result, $file_name);
+        return $flag;
 
     } catch (Exception $e) {
-        $result = array('insert error: '.$e->getMessage());
+        
     }
 
+    return false;
+
 }
-
-
-echo json_encode($result);
-if ($stmt!=null)
-    $stmt->closeCursor();
-$stmt = null;
-$conn = null;
-exit();
