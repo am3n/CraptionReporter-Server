@@ -4,7 +4,7 @@ Tutorial create CraptionReporter's server side classes and databases
 # Step 1
 ```
 create database (for example: 'craptionreporter_db')
-craete table in 'crash_reports.php'
+craete table like 'reports.sql'
 ```
 
 # Step 2
