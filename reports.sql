@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS `reports` (
   `timestamp` varchar(20) DEFAULT NULL,
   `solved` tinyint(1) NOT NULL DEFAULT '0',
   `stack_trace` text,
+  `logs` text,
   `fatal` tinyint(1) NOT NULL DEFAULT '0',
   `occur_date` varchar(20) DEFAULT NULL,
   `user_identification` varchar(50) DEFAULT NULL,

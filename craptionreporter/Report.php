@@ -55,7 +55,8 @@ foreach ($crashes as $crash) {
     $file_name = $crash["file_name"];
     $occur_date = substr($file_name, 0, 19);
     $stack_trace = getStackTrace($crash["stack_trace"]);
-    if (insert($conn, $ir_time, $stack_trace, true, $occur_date, $user_identification, 
+    $logs = $crash["logs"];
+    if (insert($conn, $ir_time, $stack_trace, $logs, true, $occur_date, $user_identification, 
                $app_version_code, $os_version, $cpu, $device_imei, $device_model, $device_screenclass, 
                $device_dpiclass, $device_screensize, $device_screen_dimensions_dpis, 
                $device_screen_dimensions_pixels)) {
@@ -126,7 +127,7 @@ function getStackTrace($stack_trace) {
 
 
 function insert(
-    $conn, $ir_time, $stack_trace, $fatal, $occur_date, $user_identification, 
+    $conn, $ir_time, $stack_trace, $logs, $fatal, $occur_date, $user_identification, 
     $app_version_code, $os_version, $cpu, $device_imei, $device_model, $device_screenclass, 
     $device_dpiclass, $device_screensize, $device_screen_dimensions_dpis, 
     $device_screen_dimensions_pixels
@@ -137,6 +138,7 @@ function insert(
         $query = "INSERT INTO reports (
             timestamp,
             stack_trace,
+            logs,
             fatal,
             occur_date,
             user_identification,
@@ -153,6 +155,7 @@ function insert(
         ) VALUES (
             :timestamp,
             :stack_trace,
+            :logs,
             :fatal,
             :occur_date,
             :user_identification,
@@ -172,6 +175,7 @@ function insert(
         $flag = $stmt->execute(array(
             ':timestamp' => $ir_time,
             ':stack_trace' => $stack_trace,
+            ':logs' => $logs,
             ':fatal' => $fatal ? 1 : 0,
             ':occur_date' => $occur_date,
             ':user_identification' => $user_identification,
