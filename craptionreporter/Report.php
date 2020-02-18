@@ -108,6 +108,9 @@ function getStackTrace($stack_trace) {
             $stackFileNameBackSlashed = str_replace(" ", "\\ ", $stackFileName);
             exec('java -jar retrace.jar -verbose '.$mappingFileName.' '.$stackFileNameBackSlashed.'  2>&1', $retracedStack);
 
+            if ($retracedStack == null)
+                return $stack_trace;
+
             $stack_trace = "";
             foreach ($retracedStack as $line) {
                 $stack_trace .= $line."\n";
