@@ -31,8 +31,10 @@ if ($json_data===null && json_last_error()!==JSON_ERROR_NONE)
 $crashes = $json_data["crashes"];
 $exceptions = $json_data["exceptions"];
 $user_identification = $json_data["user_identification"];
+$extra_info = $json_data["extra_info"];
 $app_version_code = $json_data["app_version_code"];
 $os_version = $json_data["os_version"];
+$ps_version = $json_data["ps_version"];
 $cpu = $json_data["cpu"];
 $device_imei = $json_data["device_imei"];
 $device_model = $json_data["device_model"];
@@ -56,8 +58,8 @@ foreach ($crashes as $crash) {
     $occur_date = substr($file_name, 0, 19);
     $stack_trace = getStackTrace($crash["stack_trace"]);
     $logs = $crash["logs"];
-    if (insert($conn, $ir_time, $stack_trace, $logs, true, $occur_date, $user_identification, 
-               $app_version_code, $os_version, $cpu, $device_imei, $device_model, $device_screenclass, 
+    if (insert($conn, $ir_time, $stack_trace, $logs, true, $occur_date, $user_identification, $extra_info,
+               $app_version_code, $os_version, $ps_version, $cpu, $device_imei, $device_model, $device_screenclass, 
                $device_dpiclass, $device_screensize, $device_screen_dimensions_dpis, 
                $device_screen_dimensions_pixels)) {
         array_push($result, $file_name);
@@ -70,8 +72,8 @@ foreach ($exceptions as $exception) {
     $file_name = $exception["file_name"];
     $occur_date = substr($file_name, 0, 19);
     $stack_trace = stackTrace($exception["stack_trace"]);
-    if (insert($conn, $ir_time, $stack_trace, false, $occur_date, $user_identification, 
-               $app_version_code, $os_version, $cpu, $device_imei, $device_model, $device_screenclass, 
+    if (insert($conn, $ir_time, $stack_trace, false, $occur_date, $user_identification, $extra_info,
+               $app_version_code, $os_version, $ps_version, $cpu, $device_imei, $device_model, $device_screenclass, 
                $device_dpiclass, $device_screensize, $device_screen_dimensions_dpis, 
                $device_screen_dimensions_pixels)) {
         array_push($result, $file_name);
@@ -130,8 +132,8 @@ function getStackTrace($stack_trace) {
 
 
 function insert(
-    $conn, $ir_time, $stack_trace, $logs, $fatal, $occur_date, $user_identification, 
-    $app_version_code, $os_version, $cpu, $device_imei, $device_model, $device_screenclass, 
+    $conn, $ir_time, $stack_trace, $logs, $fatal, $occur_date, $user_identification, $extra_info,
+    $app_version_code, $os_version, $ps_version, $cpu, $device_imei, $device_model, $device_screenclass, 
     $device_dpiclass, $device_screensize, $device_screen_dimensions_dpis, 
     $device_screen_dimensions_pixels
 ) {
@@ -145,8 +147,10 @@ function insert(
             fatal,
             occur_date,
             user_identification,
+            extra_info,
             app_version_code,
             os_version,
+            ps_version,
             cpu,
             device_imei,
             device_model,
@@ -162,8 +166,10 @@ function insert(
             :fatal,
             :occur_date,
             :user_identification,
+            :extra_info,
             :app_version_code,
             :os_version,
+            :ps_version,
             :cpu,
             :device_imei,
             :device_model,
@@ -182,8 +188,10 @@ function insert(
             ':fatal' => $fatal ? 1 : 0,
             ':occur_date' => $occur_date,
             ':user_identification' => $user_identification,
+            ':extra_info' => $extra_info,
             ':app_version_code' => $app_version_code,
             ':os_version' => $os_version,
+            ':ps_version' => $ps_version,
             ':cpu' => $cpu,
             ':device_imei' => $device_imei,
             ':device_model' => $device_model,
