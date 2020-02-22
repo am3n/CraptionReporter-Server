@@ -72,7 +72,7 @@ foreach ($exceptions as $exception) {
     $file_name = $exception["file_name"];
     $occur_date = substr($file_name, 0, 19);
     $stack_trace = getStackTrace($exception["stack_trace"], $app_version_code, $occur_date);
-    if (insert($conn, $ir_time, $stack_trace, false, $occur_date, $user_identification, $extra_info,
+    if (insert($conn, $ir_time, $stack_trace, null, false, $occur_date, $user_identification, $extra_info,
                $app_version_code, $os_version, $ps_version, $cpu, $device_imei, $device_model, $device_screenclass, 
                $device_dpiclass, $device_screensize, $device_screen_dimensions_dpis, 
                $device_screen_dimensions_pixels)) {
