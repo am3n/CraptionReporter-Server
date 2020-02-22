@@ -56,7 +56,7 @@ foreach ($crashes as $crash) {
 
     $file_name = $crash["file_name"];
     $occur_date = substr($file_name, 0, 19);
-    $stack_trace = getStackTrace($crash["stack_trace"], $occur_date);
+    $stack_trace = getStackTrace($crash["stack_trace"], $app_version_code, $occur_date);
     $logs = $crash["logs"];
     if (insert($conn, $ir_time, $stack_trace, $logs, true, $occur_date, $user_identification, $extra_info,
                $app_version_code, $os_version, $ps_version, $cpu, $device_imei, $device_model, $device_screenclass, 
@@ -71,7 +71,7 @@ foreach ($exceptions as $exception) {
     
     $file_name = $exception["file_name"];
     $occur_date = substr($file_name, 0, 19);
-    $stack_trace = stackTrace($exception["stack_trace"], $occur_date);
+    $stack_trace = getStackTrace($exception["stack_trace"], $app_version_code, $occur_date);
     if (insert($conn, $ir_time, $stack_trace, false, $occur_date, $user_identification, $extra_info,
                $app_version_code, $os_version, $ps_version, $cpu, $device_imei, $device_model, $device_screenclass, 
                $device_dpiclass, $device_screensize, $device_screen_dimensions_dpis, 
@@ -93,7 +93,9 @@ exit();
 
 //*******************************************************************************
 
-function getStackTrace($stack_trace, $occur_date) {
+function getStackTrace($stack_trace, $app_version_code, $occur_date) {
+
+    $stackFileName = null;
 
     try {
         if (strpos($stack_trace, 'retrace:')===0) {
@@ -108,6 +110,7 @@ function getStackTrace($stack_trace, $occur_date) {
             fclose($temp);
 
             $stackFileNameBackSlashed = str_replace(" ", "\\ ", $stackFileName);
+            $retracedStack = null;
             exec('java -jar retrace.jar -verbose '.$mappingFileName.' '.$stackFileNameBackSlashed.'  2>&1', $retracedStack);
 
             if ($retracedStack == null) {
@@ -124,7 +127,8 @@ function getStackTrace($stack_trace, $occur_date) {
         }
     } catch (Exception $e) {
         $stack_trace = 'retrace error: '.$e->getMessage();
-        unlink($stackFileName);
+        if ($stackFileName != null)
+            unlink($stackFileName);
     }
 
     return $stack_trace;
