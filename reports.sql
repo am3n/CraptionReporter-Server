@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `reports` (
   `occur_date` varchar(20) DEFAULT NULL,
   `user_identification` varchar(50) DEFAULT NULL,
   `extra_info` varchar(4096) DEFAULT NULL,
-  `app_version_code` int(11) DEFAULT NULL,
+  `app_version` varchar(20) DEFAULT NULL,
   `os_version` varchar(20) DEFAULT NULL,
   `ps_version` varchar(20) DEFAULT NULL,
   `cpu` varchar(30) DEFAULT NULL,

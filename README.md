@@ -5,6 +5,9 @@ Tutorial create CraptionReporter's server side classes and databases
 on shared hosts, auto retrace not work because API can't call exec() in php and retrace.jar not run
 but stacktrace will save in table and you can retraced it manually!
 
+# Version
+compatible with android library version >= 1.6.6
+
 # Step 1
 ```
 create database (for example: 'craptionreporter_db')
