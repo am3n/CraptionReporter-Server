@@ -6,12 +6,14 @@ on shared hosts, auto retrace not work because API can't call exec() in php and 
 but stacktrace will save in table and you can retraced it manually!
 
 # Version
-compatible with android library version >= 1.6.6
+compatible with android library version >= 1.8.0
 
 # Step 1
 ```
 create database (for example: 'craptionreporter_db')
+craete table like 'client.sql'
 craete table like 'reports.sql'
+craete table like 'log.sql'
 ```
 
 # Step 2
