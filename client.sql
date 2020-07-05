@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS `client` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uid` varchar(20) NOT NULL,
+  `timestamp` varchar(20) DEFAULT NULL, 
+  `identification` varchar(50) DEFAULT NULL,
+  `extra_info` varchar(4096) DEFAULT NULL,
+  `debug` tinyint(1) NOT NULL DEFAULT '1',
+  `app_version` varchar(20) DEFAULT NULL,
+  `os_version` varchar(20) DEFAULT NULL,
+  `ps_version` varchar(20) DEFAULT NULL,
+  `cpu` varchar(30) DEFAULT NULL,
+  `device_imei` varchar(16) DEFAULT NULL,
+  `device_model` varchar(30) DEFAULT NULL,
+  `device_screen_class` varchar(10) DEFAULT NULL,
+  `device_dpi_class` varchar(10) DEFAULT NULL,
+  `device_screen_size` varchar(5) DEFAULT NULL,
+  `device_screen_dimensions_dpis` varchar(11) DEFAULT NULL,
+  `device_screen_dimensions_pixels` varchar(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uid` (`uid`)
+);
